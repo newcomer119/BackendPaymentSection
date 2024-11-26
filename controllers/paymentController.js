@@ -9,40 +9,40 @@ const razorpay = new Razorpay({
   key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
-// Create an order
-const createOrder = async (req, res) => {
-  const { amount, currency } = req.body;
-
+// Create Razorpay order
+const createOrder = async ({ amount, currency }) => {
   try {
-    const options = {
-      amount: amount * 100, // Convert to smallest currency unit
-      currency: currency || "INR",
-    };
+    const order = await razorpay.orders.create({
+      amount: amount * 100, // Razorpay expects amount in paise
+      currency: currency,
+      receipt: crypto.randomBytes(10).toString("hex"),
+    });
 
-    const order = await razorpay.orders.create(options);
-    res.status(200).json(order);
+    return {
+      id: order.id,
+      amount: order.amount,
+      currency: order.currency,
+      status: "Order created successfully",
+    };
   } catch (error) {
-    console.error("Error creating order:", error);
-    res.status(500).json({ message: "Error creating order" });
+    console.error("Error creating Razorpay order:", error);
+    throw new Error("Error creating order");
   }
 };
 
-// Handle payment success
-const handlePaymentSuccess = async (req, res) => {
-  const { orderId, paymentStatus } = req.body;
-
+// Handle payment success and update order status
+const handlePaymentSuccess = async ({ orderId, paymentStatus }) => {
   try {
-    // Update order status in the database (mocked here)
-    console.log(`Updating order ${orderId} to status: ${paymentStatus}`);
-
+    // Logic to update the order status in your database
     if (paymentStatus === "success") {
-      res.status(200).send({ message: "Payment successful, order updated." });
+      // Update the order status in your database here
+      return { orderId, paymentStatus: "success", message: "Order updated successfully" };
     } else {
-      res.status(400).send({ message: "Payment failed." });
+      return { orderId, paymentStatus: "failed", message: "Payment failed" };
     }
   } catch (error) {
-    console.error("Error updating payment status:", error);
-    res.status(500).json({ message: "Error updating payment status" });
+    console.error("Error handling payment success:", error);
+    throw new Error("Error processing payment success");
   }
 };
 
