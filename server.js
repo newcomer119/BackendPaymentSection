@@ -14,12 +14,28 @@ const PORT = process.env.PORT || 5000;
 app.use(cors(corsOptions));
 app.use(express.json()); // Use this instead of bodyParser
 app.use(express.urlencoded({ extended: true }));
+// Add this right before app.listen()
+app.use((err, req, res, next) => {
+  console.error('Global error handler:', err);
+  res.status(500).json({
+    success: false,
+    message: 'Internal server error',
+    error: process.env.NODE_ENV === 'development' ? err.message : undefined
+  });
+});
 
 // Add a test route
 app.get('/test', (req, res) => {
   res.json({ message: 'Server is working' });
 });
 
+app.get('/test', (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
+  res.status(200).json({
+    message: 'Test endpoint working',
+    timestamp: new Date().toISOString()
+  });
+});
 // Routes
 app.use("/api/payment", paymentRoutes);
 

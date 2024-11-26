@@ -12,21 +12,31 @@ const razorpay = new Razorpay({
 // Create Razorpay order
 const createOrder = async ({ amount, currency }) => {
   try {
+    console.log('Creating order with:', { amount, currency });  // Add this
+    
     const order = await razorpay.orders.create({
-      amount: amount * 100, // Razorpay expects amount in paise
+      amount: amount * 100,
       currency: currency,
       receipt: crypto.randomBytes(10).toString("hex"),
     });
-
-    return {
+    
+    console.log('Razorpay response:', order);  // Add this
+    
+    const response = {
       id: order.id,
       amount: order.amount,
       currency: order.currency,
       status: "Order created successfully",
     };
+    
+    console.log('Sending response:', response);  // Add this
+    return response;
+    
   } catch (error) {
     console.error("Error creating Razorpay order:", error);
-    throw new Error("Error creating order");
+    // Log the full error details
+    console.error("Full error:", JSON.stringify(error, null, 2));
+    throw error; // Throw the original error
   }
 };
 
