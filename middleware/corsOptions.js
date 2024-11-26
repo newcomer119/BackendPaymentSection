@@ -1,11 +1,9 @@
+// middleware/corsOptions.js
 const corsOptions = {
-    origin: [
-      "http://localhost:3000", // Development frontend URL
-      "https://your-frontend-domain.com", // Production frontend URL
-    ],
-    methods: ["GET", "POST"],
-    allowedHeaders: ["Content-Type"],
-  };
-  
-  module.exports = corsOptions;
-  
+  origin: true, // or specify your frontend URL
+  methods: ['GET', 'POST'],
+  credentials: true,
+  allowedHeaders: ['Content-Type', 'Authorization']
+};
+
+module.exports = corsOptions;
