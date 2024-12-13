@@ -1,2 +1,5 @@
 .env.local
 .vercel
+node_modules
+# Ignore Firebase service account key
+/config/yoga-retreat-cee11-firebase-adminsdk-j16vu-2e9d44168e.json
